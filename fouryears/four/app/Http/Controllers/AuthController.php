@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\JWT;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Models\Applications;
 use App\Models\Teachers;
+use App\Models\Students;
 // use Illuminate\Contracts\Auth\Authenticatable;
 use App\Http\Controllers\Controller;
 // use Tymon\JWTAuth\Facades\JWTFactory;
@@ -45,10 +46,16 @@ class AuthController extends Controller
            if(Request::get('password')==$user['password'])
             {
                 $token = JWTAuth::fromUser($user);
-                return $this->respondWithToken($token,$username);
+            
+                if(Students::where('username',Request::get('username'))->first()){
+                    return ['username'=>$username,'status'=>'6',$this->respondWithToken($token,$username),'message'=>'登陆成功'];
+                } else{
+                    return['username'=>$username,'status'=>'5',$this->respondWithToken($token,$username),'message'=>'登陆成功'];
+                }
+                
             }
             else{
-                return ['message'=>'密码错误','status'=>'-1'];//登录失败
+                return ['message'=>'密码错误','status'=>'-2'];//登录失败
             }
         }
     }

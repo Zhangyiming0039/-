@@ -6,7 +6,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 // use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Request;
-use App\Models\Students;
+use App\Models\Enrolls;
 use Illuminate\Support\Facades\DB;
 class Applications extends Authenticatable implements JWTSubject
     {
@@ -41,16 +41,21 @@ class Applications extends Authenticatable implements JWTSubject
     // }
     public function register(){
         $username=Request::get("username");
-        // return $username;
+        $password=Request::get("password");
+        $repassword=Request::get("repassword");
+        if($password!=$repassword){
+            return ['message'=>'确认密码与初始密码不一致','status'=>'1'];
+        }
         if($this->where('username',$username)->first()){
             return 0;
+
         }
         else{
             $this->username=Request::get("username");
             $this->password=Request::get("password");
             $this->phone=Request::get("phone");
             $this->save();
-            DB::insert("insert into students(username) values ('{$username}');");
+            DB::insert("insert into enrolls(username) values ('{$username}');");
             return 1;
         }
        
